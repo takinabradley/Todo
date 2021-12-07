@@ -5,6 +5,7 @@ module.exports = {
   mode: 'development',
   entry: {
     index: './src/index.js',
+    events: './src/events.js'
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -16,7 +17,7 @@ module.exports = {
     }),
   ],
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },

@@ -1,90 +1,21 @@
-/*let Events = {
-  events: {},
-  on: function (eventName, fn) {
-    this.events[eventName] = this.events[eventName] || [];
-    this.events[eventName].push(fn);
-  },
-  off: function(eventName, fn) {
-    if (this.events[eventName]) {
-      for (let i = 0; i < this.events[eventName].length; i++) {
-        if (this.events[eventName][i] === fn) {
-          this.events[eventName].splice(i, 1);
-          break;
-        }
-      }
-    }
-  },
-  emit: function (eventName, data) {
-    if (this.events[eventName]) {
-      this.events[eventName].forEach(function(fn) {
-        fn(data);
-      });
-    }
-  },
-};*/
+import Stats from './stats.js'
+import People from './people.js';
+
+People.addPeople(['brian', 'the rock']);
 
 
-  /*
-    Classic terminology:
-      pubsub
-      pubsub.subscribe
-      pubsub.unsubscribe
-      pubsub.publish    
-                        */
+//ToDo objects should have properties such as title, description, duedate, priority.
+//Notes and checklist would be nice too.
 
-let Events = (function() {
-  events = {};
+//Pojects should hold lists of ToDo objects. There should be a default project
+//users can add ToDo objects to. Users should be able to create new projects
+//and choose which their todos go.
 
-  function on (eventName, fn) {
-    events[eventName] = events[eventName] || [];
-    events[eventName].push(fn);
-  }
+//separate application logic from DOM-Related stuff.
 
-  function off (eventName, fn) {
-    if (events[eventName]) {
-      for (let i = 0; i < events[eventName].length; i++) {
-        if (events[eventName][i] === fn) {
-          events[eventName].splice(i, 1);
-          break;
-        }
-      }
-    }
-  }
+//Users should be able to: view all projects, view all todos in each project,
+//expand a todo to see/edit, and delete Todos.
 
-  function emit(eventName, data) {
-    if (events[eventName]) {
-      events[eventName].forEach(function(fn) {
-        fn(data);
-      });
-    }
-  }
+//May want to use date-fns.
 
-  return {on, off, emit};
-})();
-
-
-
-const people = (function() {
-  let people = [];
-  function addPeople(array) {
-    array.forEach(person => people.push(person));
-    Events.emit('peopleChanged', people);
-  }
-  return {addPeople};
-})();
-
-
-const module2 = (function() {
-  let stats = {};
-
-  Events.on('peopleChanged', setPeople);
-
-  function setPeople(people) {
-    stats.people = people.length;
-    console.log(stats);
-    console.log(stats.people);
-  }
-})();
-
-people.addPeople(['brian', 'g', 'the rock']);
-
+//use local storage!
