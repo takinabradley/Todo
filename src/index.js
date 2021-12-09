@@ -1,7 +1,53 @@
-import Stats from './stats.js'
-import People from './people.js';
+import Projects from './modules/projects.js';
 
-People.addPeople(['brian', 'the rock']);
+Projects.create('something').addTodo('aVeryLongTodo').addTodo('AnotherVeryLongTodo');
+Projects.create('somethingElse');
+Projects.create('woweeeee');
+
+
+
+console.log(Projects.get('something').getTodo())
+console.log(Projects.rename());
+console.log(Projects.get());
+
+function renameTodo(project, oldName, newName) {
+  Projects.get(project).removeTodo(oldName).addTodo(newName);
+  return Projects.get(project);
+}
+
+console.log(renameTodo('something', 'aVeryLongTodo', 'shortTodo'))
+
+
+function getTodoIndex(projectName, todoTitle) {
+  let array = Projects.get(projectName).getTodo()
+  let todoIndex;
+  array.forEach( (item, index) => {
+    if(item.title === todoTitle) {
+      todoIndex = index; 
+    }
+  });
+  return todoIndex;
+}
+
+console.log(getTodoIndex('something', 'AnotherVeryLongTodo'));
+console.log(Projects.rename('something', 'somethingRenamed'));
+
+Projects.get('somethingRenamed').todos[3] = 'kladsjf;adsfj';
+Projects.get('somethingRenamed').name = 'alksdfj'
+console.log(Projects.get('alksdfj'))
+
+
+
+
+
+
+//let defaultProject = ProjectCreate('Default');
+//defaultProject.addTodo('newTodo');
+//defaultProject.addTodo('anotherTodo');
+//defaultProject.addTodo('thirdTodo');
+//defaultProject.removeTodo('anotherTodo');
+//console.log(defaultProject);
+
 
 
 //ToDo objects should have properties such as title, description, duedate, priority.

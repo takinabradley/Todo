@@ -29,3 +29,40 @@ const Events = (function() {
 })();
 
 export default Events;
+
+
+/* People.js
+
+import Events from './events.js';
+
+const People = (function() {
+  let people = [];
+
+  function addPeople(array) {
+    array.forEach(person => people.push(person));
+    Events.emit('peopleChanged', people);
+  }
+
+  return {addPeople};
+})();
+
+export default People;
+*/
+
+/* Stats.js
+import Events from './events.js';
+
+const Stats = (function() {
+  let stats = {};
+
+  Events.on('peopleChanged', setPeople);
+
+  function setPeople(people) {
+    stats.people = people.length;
+    console.log(stats);
+    console.log(stats.people);
+  }
+})();
+
+export default Stats;
+*/
