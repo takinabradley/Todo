@@ -1,22 +1,10 @@
 import Projects from './modules/projects.js';
 
-Projects.create('something').addTodo('aVeryLongTodo').addTodo('AnotherVeryLongTodo');
-Projects.create('somethingElse');
-Projects.create('woweeeee');
-
-
-
-console.log(Projects.get('something').getTodo())
-console.log(Projects.rename());
-console.log(Projects.get());
 
 function renameTodo(project, oldName, newName) {
   Projects.get(project).removeTodo(oldName).addTodo(newName);
-  return Projects.get(project);
+  return Projects.get(project).getTodo(newName);
 }
-
-console.log(renameTodo('something', 'aVeryLongTodo', 'shortTodo'))
-
 
 function getTodoIndex(projectName, todoTitle) {
   let array = Projects.get(projectName).getTodo()
@@ -29,25 +17,15 @@ function getTodoIndex(projectName, todoTitle) {
   return todoIndex;
 }
 
-console.log(getTodoIndex('something', 'AnotherVeryLongTodo'));
-console.log(Projects.rename('something', 'somethingRenamed'));
-
-Projects.get('somethingRenamed').todos[3] = 'kladsjf;adsfj';
-Projects.get('somethingRenamed').name = 'alksdfj'
-console.log(Projects.get('alksdfj'))
-
-
-
-
-
-
-//let defaultProject = ProjectCreate('Default');
-//defaultProject.addTodo('newTodo');
-//defaultProject.addTodo('anotherTodo');
-//defaultProject.addTodo('thirdTodo');
-//defaultProject.removeTodo('anotherTodo');
-//console.log(defaultProject);
-
+function getProjectIndex(projectName) {
+  let projectIndex 
+  Projects.get().forEach( (item, index) => {
+    if(item.getName() === projectName) {
+      projectIndex = index;
+    }
+  });
+  return projectIndex;
+}
 
 
 //ToDo objects should have properties such as title, description, duedate, priority.
@@ -65,3 +43,5 @@ console.log(Projects.get('alksdfj'))
 //May want to use date-fns.
 
 //use local storage!
+
+

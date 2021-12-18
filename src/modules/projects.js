@@ -1,143 +1,164 @@
 
-/*  This module exports a 'Projects' object that keeps 
-    track of Projects and their Todos  */
-
 /*  
-    Creating and Retrieveing Projects:
+    This module exports a 'Projects' object that keeps 
+    track of Projects and their Todos.
 
-      Create Projects with Project.create('projectName')...
-      ... and retrive them with Project.get('projectName')
+    Note: many module methods return the module itself, and many methods on 
+      project objects return the project itself, allowing you to chain methods.
+ 
+    ~~~~~~~~~~~~~~~~~~~Add, retrive, and remove projects~~~~~~~~~~~~~~~~~~~~~~~~
 
-      You may also Project.remove('projectName'), and
-      Project.rename('projectName', 'newName')
+      Create projects with Project.add('projectName')
 
-      To fetch the array of of all objects, use Project.get() without arguments.
-
-
-    Adding Todo Lists to Projects:
-
-      Most methods related to Creating and Retrieving projects (above) return
-      the object. Todo Lists have the following arguments: Title, Description,
-      DueDate, and Priority.
-
-      You may initiate a Project with one or more Todo lists like so:
-      Project.create('newProject').addTodo('Title', 'Description', 'DueDate',
-                     'Priority').addTodo(etc...)
+      Retrive them with Project.find('projectName')
+      or use Projects.list for an array of all projects
       
-      To add a todo to a project after creation, use Project.get('projectName'):
-      Project.get('projectName').addTodo(...);
+      You may rename an object by retriving it through one of the above methods:
+        Ex: Projects.find('ProjectName').name = 'newName'
+      Projects may not have identical names.
 
-      You may also remove a todo by naming it's title with:
-      Project.get('projectName').removeTodo('todoTitle');
+      Remove projects with Project.remove('projectName')
 
-      To return the array of a projects todos, use:
-      Project.get('projectName').getTodos();
 
-      The above functions chain, minus getTodos(). So you may add and remove 
-      todos on the same line:
-      Project.get('...').removeTodo('someTodo').addTodo('newTodo');
+    ~~~~~~~~~~~~~~~~~~~Add, retrive, and remove todos~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      You may initiate a Project with a todo like so:
+        Projects.add('newProject').find('newProject').addTodo('Title', 
+                                                              'Description', 
+                                                              'DueDate',
+                                                              'Priority')
+      
+      To add todos after creation retrieve an object and use it's addTodo method
+        Projects.find('projectName').addTodo(...);
+
+      Retrive todos with .findTodo('todoName') or .listTodos
+
+      Remove todos with .removeTodo('todoTitle')
+        Project.find('projectName').removeTodo('todoTitle');
+
+      You may rename a todo's title, but otherwise must remove a todo and create
+      a new one. Todos in a project may not have identical titles:
+        //change just the title
+        Projects.find('ProjectName').findTodo('todoName').title = 'newTitle'
+
+        //change more than just the title
+        Projects.find('ProjectName').removeTodo('todoName').addTodo(...);
 */
 
 
+//I need to re-create this functionality
+// Custom Methods for the entire 'Projects' Object go here:
+//Use: Projects.CustomMethod()
+/*  ProjectsPrototype = {
+    method: function(){};
+  } */
 
 
-//You can 
-//and retrive projects with Project.get('projectName');
-
-//You may also Project.rename('projectName', 'newName')
-//and Project.remove('projectName')
-
-//Projects 
-
-const projectPrototype = {
-  type: 'project',
-  getTodo: function(title = 'all') {
-    if(title === 'all') {
-      return this.todos;
-    } else {
-      let returnTodo;
-      for(let i = 0; i < this.todos.length; i++) {
-        if(this.todos[i].title === title) {
-          returnTodo = this.todos[i];
-          break;
-        }
-      }
-      return returnTodo;
-    }
-    
-  },
-  addTodo: function (title = '', description = '', duedate = '', priority = '') {
-    this.todos.push({title, description, duedate, priority});
-    return this;
-  },
-  removeTodo: function (title) {
-    for(let i = 0; i < this.todos.length; i++) {
-      if(this.todos[i].title === title) {
-        this.todos.splice(i, 1);
-        break;
-      }
-    }
-    return this;
-  },
-};
+//Custom methods for projects inside the 'projects' array go here:
+//Use: Projects.get('project').CustomMethod()
+/*  projectsPrototype = {
+      method: function() {}
+    } */
 
 const Projects = (function() {
-  let projects = [];
+  const projectsList = [];
 
-  function create(name) {
-    let todos = [];
-    let werk = 'werk'
-    function getWerk() {
-      return werk;
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~Project Creation~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  function add(name) {
+    if(find(name) !== undefined) return; //disallows identical projects
+    const todoList = [];
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~Todo Creation~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    function addTodo(title = '', description = '', duedate = '', priority = '') {
+      if(findTodo(title) !== undefined) return; //disallows identical todos
+
+      //todo properties and methods
+      const todo = Object.freeze({
+        get title() {return title}, 
+        set title(newTitle) {
+          if(findTodo(newTitle) !== undefined) return; //disallows identical todos
+          title = newTitle
+          return newTitle;
+        },
+        get description() {return description}, 
+        get duedate() {return duedate}, 
+        get priority() {return priority}
+      });
+
+      todoList.push(todo)
+      return this;
+    };
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~End of Todo Creation~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    
+    //other crud
+    function findTodo(title) {
+      if(title === undefined) {
+        return;
+      } else {
+        return todoList.find( todo => todo.title === title );
+      }
+    };
+
+    function removeTodo(title) {
+      const index = todoList.findIndex(todo => todo.title === title);
+
+      if (index === -1) {
+        return;
+      } else {
+        todoList.splice(index , 1);
+        return this;
+      }
     }
-    const obj = Object.assign(Object.create(projectPrototype), {name, todos});
-    return projects[projects.push(obj) - 1];
+
+    //project properties and methods
+    const project = Object.freeze({ 
+      get name() {return name}, 
+      set name(newName) {
+        if(find(newName) !== undefined) return; //disallows identical projects
+        name = newName
+        return newName
+      },
+      get listTodos() {return [...todoList]},
+      addTodo,
+      findTodo,
+      removeTodo
+    });
+
+    projectsList.push(project)
+    return this;
   };
+  /*~~~~~~~~~~~~~~~~~~~~~~~~End of Project Creation~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-  function get(name = 'all') {
-    if(name === 'all') {
-      return projects;
-    } else {
-
-      return projects.find( project => project.name === name)
-      //let returnObject;
-      //for(let i = 0; i < projects.length; i++) {
-      //  if(projects[i].name === name) {
-      //    returnObject = projects[i];
-      //    break;
-      //  }
-      //}
-      //
-      //return returnObject;
-    }
-  };
-
+  //other crud
   function remove(name) {
-    for(let i = 0; i < projects.length; i++) {
-      if(projects[i].name === name) {
-        projects.splice(i, 1);
-        return projects;
-      }
+    const index = projectsList.findIndex(project => project.name === name);
+
+    if (index === -1) {
+      return; //returns if findIndex doesn't find a match
+    } else {
+      projectsList.splice(index , 1);
+      return this;
     }
   }
 
-  function rename(name, newName = get(name).name) {
-    let renamedProject;
-
-    for(let i = 0; i < projects.length; i++) {
-      if(projects[i].name === name) {
-        projects[i].name = newName;
-        renamedProject = projects[i];
-        break;
-      }
+  function find(name) {
+    if(name === undefined) {
+      return;
+    } else {
+      return projectsList.find( project => project.name === name );
     }
-    return renamedProject;
-  }
+  };
 
-  return {create, get, remove, rename}
+  //module properties and methods
+  return {
+    get list() {
+      return [...projectsList];
+    },
+    add,
+    remove,
+    find
+  }
 })();
+//I may want to implement returning 'this' for chaining
 
 export default Projects;
-
-//realizing now that new project objects are not safe...
-//need to edit factory function to be safe.
