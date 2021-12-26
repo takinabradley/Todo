@@ -1,31 +1,16 @@
-import Projects from './modules/projects.js';
+import stylesheet from './styles.css'
+import Projects, {ProjectRenderer, ProjectInterface} from './modules/projects.js';
+import Events from './modules/events.js';
 
 
-function renameTodo(project, oldName, newName) {
-  Projects.get(project).removeTodo(oldName).addTodo(newName);
-  return Projects.get(project).getTodo(newName);
-}
 
-function getTodoIndex(projectName, todoTitle) {
-  let array = Projects.get(projectName).getTodo()
-  let todoIndex;
-  array.forEach( (item, index) => {
-    if(item.title === todoTitle) {
-      todoIndex = index; 
-    }
-  });
-  return todoIndex;
-}
 
-function getProjectIndex(projectName) {
-  let projectIndex 
-  Projects.get().forEach( (item, index) => {
-    if(item.getName() === projectName) {
-      projectIndex = index;
-    }
-  });
-  return projectIndex;
-}
+ProjectRenderer.init(document.querySelector('.projects-list'), 
+                     document.querySelector('.todo-list'))
+
+Projects.getFromLocalStorage();
+
+
 
 
 //ToDo objects should have properties such as title, description, duedate, priority.
@@ -43,5 +28,3 @@ function getProjectIndex(projectName) {
 //May want to use date-fns.
 
 //use local storage!
-
-

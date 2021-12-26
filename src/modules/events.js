@@ -25,7 +25,7 @@ const Events = (function() {
     }
   }
 
-  return {on, off, emit};
+  return {on, off, emit, get list() {return events}};
 })();
 
 export default Events;
