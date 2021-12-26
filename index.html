@@ -1,9 +1,32 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Todo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1"><script defer src="index.bundle.js"></script></head>
-  <body>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>todo</title>
+<script defer src="index.bundle.js"></script><script defer src="events.bundle.js"></script><script defer src="projects.bundle.js"></script></head>
+<body>
+  <main>
+    <aside class="sidebar">
+			<button class="addProject active">Add Project</button>
+      <div class="projects-list">
+        
+      </div>
+			<form></form>
+		</aside>
+		
+		
+		<section class="todos">
+      <div class="sort-bar">
+        <span class="sort-title">title</span>
+        <span class="sort-description">description</span>
+        <span class="sort-duedate">duedate</span>
+        <span class="sort-priority">priority</span>
+      </div>
+      
+      <div class="todo-list"></div>
+    </section>
+  </main>
+</body>
 </html>
