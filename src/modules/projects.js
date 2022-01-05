@@ -233,19 +233,19 @@ const ProjectRenderer = (function() {
   let renderEditable;
   let firstInit = true;
 
-  function _renderProjectAdder() {
+  function _appendProjectAdder() {
     const form = document.createElement('form');
-    form.classList.add('project-form');
+    form.classList.add('project-add');
     projectArea.appendChild(form);
 
     const addLabel = document.createElement('label');
-    addLabel.classList.add('project-name-label');
+    addLabel.classList.add('project-add-label');
     addLabel.setAttribute('for', 'name');
     addLabel.textContent = "Project Name:";
     form.appendChild(addLabel);
 
     const addInput = document.createElement('input');;
-    addInput.classList.add('project-name-input');
+    addInput.classList.add('project-add-input');
     addInput.setAttribute('name', 'name');
     addInput.setAttribute('type', 'text');
     addInput.setAttribute('placeholder', 'New Project');
@@ -253,7 +253,7 @@ const ProjectRenderer = (function() {
     form.appendChild(addInput);
 
     const addBtn = document.createElement('button');
-    addBtn.classList.add('project-form-addBtn');
+    addBtn.classList.add('project-add-button');
     addBtn.setAttribute('type', 'submit');
     addBtn.textContent = 'Add';
     form.appendChild(addBtn);
@@ -262,31 +262,34 @@ const ProjectRenderer = (function() {
     addBtn.addEventListener('click', addProject);
   }
   
-  function _renderProjectEditor(projectElement) {
+  function _appendProjectEditor(projectElement) {
     const editBtn = document.createElement('button');
     editBtn.classList.add('project-edit');
     editBtn.textContent = '✎';
     projectElement.appendChild(editBtn)
 
-    //Hides edit button and provides additional options until user moves away
-    editBtn.addEventListener('click', function(e) {
+    const editProject = (e) => {
       const projectNameElement = e.target.nextSibling
       const projectName = projectNameElement.textContent
       
+      //change element properties
       projectNameElement.setAttribute('contenteditable', 'true');
+      projectNameElement.classList.add('editable');
       editBtn.setAttribute('hidden', '')
 
-      const removeElement = document.createElement('span');
-      removeElement.classList.add('project-remove');
-      removeElement.textContent = '-';
-      projectElement.insertBefore(removeElement, projectNameElement);
-
-      removeElement.addEventListener('click', () => Projects.remove(projectName));
+      //add remove element
+      const removeBtn = document.createElement('button');
+      removeBtn.classList.add('project-remove');
+      removeBtn.textContent = '-';
+      projectElement.insertBefore(removeBtn, projectNameElement);
+      removeBtn.addEventListener('click', () => Projects.remove(projectName));
       
+      //exit editor and apply any name changes
       const exitEditor = (e) => {
         projectNameElement.setAttribute('contenteditable', 'false')
-        projectElement.removeChild(removeElement)
         editBtn.removeAttribute('hidden')
+        projectElement.removeChild(removeBtn)
+        projectNameElement.classList.remove('editable');
         
         if(projectNameElement.textContent !== projectName) {
           const newName = projectNameElement.textContent;
@@ -298,12 +301,14 @@ const ProjectRenderer = (function() {
           }
         }
 
-        //must remove listener, or will continue attempting to remove removeElement
+        //must remove listener, or will continue attempting to remove removeBtn
         projectElement.removeEventListener('mouseleave', exitEditor)
       }
 
       projectElement.addEventListener('mouseleave', exitEditor);
-    })
+    }
+    //Hides edit button and provides additional options until user moves away
+    editBtn.addEventListener('click', editProject)
   }
 
   function _renderProjects() {
@@ -314,26 +319,147 @@ const ProjectRenderer = (function() {
 
     projectArea.innerHTML = '';
     
-    if(renderEditable === true) _renderProjectAdder();
+    if(renderEditable === true) _appendProjectAdder();
 
     Projects.list.forEach( project => {
       const projectElement = document.createElement('div');
       projectElement.classList.add('project-element');
       
-      if(renderEditable === true) _renderProjectEditor(projectElement);
+      if(renderEditable === true) _appendProjectEditor(projectElement);
 
       const name = document.createElement('span');
       name.classList.add('project-name');
       name.textContent = project.name;
       projectElement.appendChild(name);
+      
+      //renders todos on project click
+      name.addEventListener('click', (e) => {
+        if(!name.classList.contains('editable')) { //prevents switching in editor mode
+          _renderTodos(e.target.textContent);
+        }
+      });
 
-      name.addEventListener('click', (e) => _renderTodos(e.target.textContent));
-
-      projectArea.appendChild(projectElement);
+      if(renderEditable === true) {
+        const projectAdder = document.querySelector('.project-add');
+        projectAdder.after(projectElement)
+      } else {
+        projectArea.prepend(projectElement);
+      }
     })
   }
 
-  
+  function _appendTodoAdder(sortBar) {
+    const addBtn = document.createElement('button')
+    addBtn.classList = 'sort-add'
+    addBtn.textContent = '+'
+    sortBar.appendChild(addBtn)
+  }
+
+  function _appendSortBar() {
+    const sortBar = document.createElement('div');
+    sortBar.classList.add('sort-bar');
+
+    if(renderEditable === true) _appendTodoAdder(sortBar)
+
+    const sortTitle = document.createElement('span');
+    sortTitle.classList.add('sort-title');
+    sortTitle.textContent = 'title';
+    sortBar.appendChild(sortTitle)
+
+    const sortDescription = document.createElement('span');
+    sortDescription.classList.add('sort-description');
+    sortDescription.textContent = 'description';
+    sortBar.appendChild(sortDescription)
+
+    const sortDuedate = document.createElement('span');
+    sortDuedate.classList.add('sort-duedate')
+    sortDuedate.textContent = 'duedate';
+    sortBar.appendChild(sortDuedate)
+
+    const sortPriority = document.createElement('span');
+    sortPriority.classList.add('sort-priority');
+    sortPriority.textContent = 'priority';
+    sortBar.appendChild(sortPriority)
+
+    todoArea.appendChild(sortBar);
+  }
+
+
+  function _appendTodoEditor(todoElement) {
+    const editBtn = document.createElement('button');
+
+    editBtn.classList.add('todo-edit');
+    editBtn.textContent = '✎';
+    todoElement.appendChild(editBtn);
+
+    editBtn.addEventListener('click', () => {
+      const titleElement = todoElement.querySelector('.todo-title')
+      const descriptionElement = todoElement.querySelector('.todo-description');
+      const duedateElement = todoElement.querySelector('.todo-duedate');
+      const priorityElement = todoElement.querySelector('.todo-priority');
+
+      const title = titleElement.textContent;
+      const description = descriptionElement.textContent;
+      const duedate = duedateElement.textContent;
+      const priority = duedateElement.textContent;
+
+      const makeTodoEditable = (bool) => {
+        titleElement.setAttribute('contentEditable', bool);
+        descriptionElement.setAttribute('contentEditable', bool);
+        duedateElement.setAttribute('contentEditable', bool);
+        priorityElement.setAttribute('contentEditable', bool);
+
+        if(bool === true) {
+          titleElement.classList.add('editable')
+          descriptionElement.classList.add('editable')
+          duedateElement.classList.add('editable')
+          priorityElement.classList.add('editable')
+        } else {
+          titleElement.classList.remove('editable')
+          descriptionElement.classList.remove('editable')
+          duedateElement.classList.remove('editable')
+          priorityElement.classList.remove('editable')
+        }
+
+      }
+      
+      editBtn.setAttribute('hidden', '');
+      makeTodoEditable(true)
+
+      const submitBtn = document.createElement('button');
+      submitBtn.classList.add('todo-submit');
+      submitBtn.textContent = '✓';
+      todoElement.prepend(submitBtn);
+
+      const submitTodoEdits = (e) => {
+        editBtn.removeAttribute('hidden');
+        todoElement.removeChild(submitBtn);
+        makeTodoEditable(false)
+
+        todoElement.removeEventListener('mouseleave', exitEditor)
+      };
+
+      submitBtn.addEventListener('click', submitTodoEdits);
+
+
+      const exitEditor = (e) => {
+        editBtn.removeAttribute('hidden');
+        todoElement.removeChild(submitBtn);
+
+        makeTodoEditable(false)
+
+        titleElement.textContent = title;
+        descriptionElement.textContent = description;
+        duedateElement.textContent = duedate;
+        priorityElement.textContent = priority;
+
+        todoElement.removeEventListener('mouseleave', exitEditor)
+      }
+
+      todoElement.addEventListener('mouseleave', exitEditor)
+    })
+  }
+
   function _renderTodos(projectName) {
     if(typeof todoArea !== 'object') {
       console.log('ProjectRenderer: todoArea left undefined!');
@@ -343,33 +469,37 @@ const ProjectRenderer = (function() {
     todoArea.innerHTML = '';
   
     const todos = Projects.find(projectName).listTodos;
+
+    _appendSortBar();
   
     if(todos.length > 0) {
   
       todos.forEach(todo => {
         const todoElement = document.createElement('div');
         todoElement.classList.add('todo-element');
-  
+        
+        if(renderEditable === true) _appendTodoEditor(todoElement);
+
         const title = document.createElement('span');
         title.textContent = todo.title;
         title.classList.add('todo-title');
-  
+        todoElement.appendChild(title);
+
         const description = document.createElement('span');
         description.textContent = todo.description;
         description.classList.add('todo-description');
+        todoElement.appendChild(description);
   
         const duedate = document.createElement('span');
         duedate.textContent = todo.duedate;
         duedate.classList.add('todo-duedate');
+        todoElement.appendChild(duedate);
   
         const priority = document.createElement('span');
         priority.textContent = todo.priority;
         priority.classList.add('todo-priority');
-  
-        todoElement.appendChild(title);
-        todoElement.appendChild(description);
-        todoElement.appendChild(duedate);
-        todoElement.appendChild(priority);
+        todoElement.appendChild(priority);  
+        
         todoArea.appendChild(todoElement);
       })
     }
