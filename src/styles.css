@@ -89,21 +89,11 @@ main {
 
 /*todo section*/
 .todos {
-  /*min-height: 100%;*/
+	padding: 10px;
 	flex: 5;
 	background-color: slategray;
 }
 
-.todo-list {
-	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	flex: 5;
-	min-height: 100%;
-	padding: 10px;
-	align-content: flex-start;
-	background-color: slategray;
-}
 
 /*sort bar*/
 .sort-bar {
@@ -111,14 +101,16 @@ main {
 	justify-content: space-between;
 	background-color: lightgray;
 	border: 1px solid gray;
-	border-radius: 3px;
+	border-radius: 5px;
 	width: 100%;
+	word-wrap: break-word;
 	flex: 0 1 auto;
 	margin-bottom: 10px;
 }
 
 .sort-title, .sort-description, .sort-priority, .sort-duedate {
 	flex: 1;
+	width: 25%;
 	text-align: center;
 	padding: 3px;
 	margin-left: 5px;
@@ -131,7 +123,7 @@ main {
 
 .sort-add {
 	flex: 1;
-	max-width: 20px;;
+	max-width: 20px;
 	background: none;
   border: none;
   padding: 0;
@@ -150,6 +142,7 @@ main {
 	flex: 0 1 auto;
 	word-wrap: break-word;
 	margin-bottom: 5px;
+	padding: 5px;
 }
 
 .todo-title, .todo-description, .todo-priority, .todo-duedate {
@@ -157,7 +150,8 @@ main {
 	width: 25%;
 	word-wrap: break-word;
 	text-align: center;
-	margin: 5px;
+	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .todo-description {
@@ -173,10 +167,13 @@ main {
 .todo-priority.editable, 
 .todo-duedate.editable {
 	border: 1px solid black;
-	border-radius: 3px;;
+	border-radius: 3px;
 }
 
-
+.todo-priority.editable,
+.todo-duedate.editable {
+	background-color: rgb(229, 230, 231);
+}
 
 /*Todo Editor*/
 .todo-edit {
@@ -197,8 +194,10 @@ main {
   border: none;
   padding: 0;
 	font-size: 20px;
+
 	margin-left: 5px;
 	margin-right: 5px;
+
 	color: green;
 	font-weight: 900;
 }

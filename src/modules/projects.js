@@ -384,7 +384,7 @@ const ProjectRenderer = (function() {
     todoArea.appendChild(sortBar);
   }
 
-
+  //this function seems a bit messy
   function _appendTodoEditor(todoElement) {
     const editBtn = document.createElement('button');
 
@@ -392,7 +392,7 @@ const ProjectRenderer = (function() {
     editBtn.textContent = '✎';
     todoElement.appendChild(editBtn);
 
-    editBtn.addEventListener('click', () => {
+    editBtn.addEventListener('click', (e) => {
       const titleElement = todoElement.querySelector('.todo-title')
       const descriptionElement = todoElement.querySelector('.todo-description');
       const duedateElement = todoElement.querySelector('.todo-duedate');
@@ -406,47 +406,58 @@ const ProjectRenderer = (function() {
       const makeTodoEditable = (bool) => {
         titleElement.setAttribute('contentEditable', bool);
         descriptionElement.setAttribute('contentEditable', bool);
-        duedateElement.setAttribute('contentEditable', bool);
-        priorityElement.setAttribute('contentEditable', bool);
+      
+        let duedateInput = document.createElement('input');
+        duedateInput.classList.add('todo-duedate', 'editable');
+        duedateInput.setAttribute('for', 'duedate')
+        duedateInput.setAttribute('type', 'date')
 
+        let prioritySelect = document.createElement('select');
+        prioritySelect.classList.add('todo-duedate', 'editable');
+      
+        const lowPriority = document.createElement('option')
+        lowPriority.textContent = 'low';
+        const mediumPriority = document.createElement('option');
+        mediumPriority.textContent = 'medium';
+        const highPriority = document.createElement('option');
+        highPriority.textContent = 'high';
+      
+        prioritySelect.append(lowPriority, mediumPriority, highPriority)
+      
+      
         if(bool === true) {
+          editBtn.setAttribute('hidden', '')
           titleElement.classList.add('editable')
           descriptionElement.classList.add('editable')
-          duedateElement.classList.add('editable')
-          priorityElement.classList.add('editable')
+        
+          duedateElement.setAttribute('hidden', '')
+          todoElement.insertBefore(duedateInput, priorityElement);
+        
+          priorityElement.setAttribute('hidden', '')
+          todoElement.appendChild(prioritySelect)
         } else {
+          editBtn.removeAttribute('hidden');
           titleElement.classList.remove('editable')
           descriptionElement.classList.remove('editable')
-          duedateElement.classList.remove('editable')
-          priorityElement.classList.remove('editable')
+        
+          duedateElement.removeAttribute('hidden')
+          priorityElement.removeAttribute('hidden')
+        
+          //must update elements to remove them?
+          duedateInput = todoElement.querySelector('input');
+          prioritySelect = todoElement.querySelector('select');
+          todoElement.removeChild(duedateInput)
+          todoElement.removeChild(prioritySelect);
+        
+          //important: how to get values
+          console.log(duedateInput.value)
+          console.log(prioritySelect.options[prioritySelect.selectedIndex].text)
         }
-
       }
-      
-      editBtn.setAttribute('hidden', '');
-      makeTodoEditable(true)
-
-      const submitBtn = document.createElement('button');
-      submitBtn.classList.add('todo-submit');
-      submitBtn.textContent = '✓';
-      todoElement.prepend(submitBtn);
-
-      const submitTodoEdits = (e) => {
-        editBtn.removeAttribute('hidden');
-        todoElement.removeChild(submitBtn);
-        makeTodoEditable(false)
-
-        todoElement.removeEventListener('mouseleave', exitEditor)
-      };
-
-      submitBtn.addEventListener('click', submitTodoEdits);
-
 
       const exitEditor = (e) => {
-        editBtn.removeAttribute('hidden');
-        todoElement.removeChild(submitBtn);
-
         makeTodoEditable(false)
+        todoElement.removeChild(submitBtn);
 
         titleElement.textContent = title;
         descriptionElement.textContent = description;
@@ -455,6 +466,32 @@ const ProjectRenderer = (function() {
 
         todoElement.removeEventListener('mouseleave', exitEditor)
       }
+
+      const submitChanges = (e) => {
+        const duedateInput = todoElement.querySelector('input')
+        const duedateValue = duedateInput.value;
+
+        const prioritySelect = todoElement.querySelector('select')
+        const priorityOption = prioritySelect.options[prioritySelect.selectedIndex].text
+
+        todoElement.removeChild(submitBtn);
+        makeTodoEditable(false)
+
+        //titleElement.textContent = title;
+        //descriptionElement.textContent = description;
+        duedateElement.textContent = duedateValue;
+        priorityElement.textContent = priorityOption;
+
+        todoElement.removeEventListener('mouseleave', exitEditor)
+      };
+      
+      makeTodoEditable(true)
+
+      const submitBtn = document.createElement('button');
+      submitBtn.classList.add('todo-submit');
+      submitBtn.textContent = '✓';
+      todoElement.prepend(submitBtn);
+      submitBtn.addEventListener('click', submitChanges);
 
       todoElement.addEventListener('mouseleave', exitEditor)
     })
