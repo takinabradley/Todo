@@ -476,7 +476,6 @@ const ProjectRenderer = (function() {
       todoElements.forEach(element => {
         element.removeEventListener('click', removeElement);
         element.classList.remove('removeable');
-        
       });
 
       removeBtn.classList.remove('active');

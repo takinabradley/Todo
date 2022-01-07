@@ -11,7 +11,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     static: './dist',
-    hot: false, //allows reloading with HTML Templates
+    hot: true, //allows reloading with HTML Templates
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -22,7 +22,6 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
     clean: true,
   },
   module: {
