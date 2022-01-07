@@ -131,6 +131,10 @@ main {
 	margin-left: 3.5px;
 }
 
+.sort-add.active {
+	color: green;
+}
+
 .sort-remove {
 	flex: 1;
 	max-width: 10px;

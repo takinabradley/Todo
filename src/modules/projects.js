@@ -347,84 +347,172 @@ const ProjectRenderer = (function() {
     })
   }
 
-  function _appendTodoAdder(sortBar) {
-    const addBtn = document.createElement('button')
-    addBtn.classList = 'sort-add'
-    addBtn.textContent = '+'
-    sortBar.appendChild(addBtn)
+  function _appendTodoAdder(sortBar, projectName) {
+    const addBtn = document.createElement('button');
+    addBtn.classList = 'sort-add';
+    addBtn.textContent = '+';
+    sortBar.appendChild(addBtn);
+
+    const exitTodoAdder = () => {
+      const addForm = document.querySelector('.todo-addForm')
+      const projectName = addForm.getAttribute('data-project');
+      if(addForm !== null) {
+        addForm.remove();
+      }
+
+      const projectNameElements = document.querySelectorAll('.project-name');
+      projectNameElements.forEach(element => {
+        if(element.textContent === projectName) {
+          element.dispatchEvent(
+            new MouseEvent('click', {
+              view: window,
+              bubbles: true,
+              cancelable: true
+            })
+          );
+        }
+      })
+
+      addBtn.classList.remove('active');
+      addBtn.addEventListener('click', createAddForm, {once: true});
+    }
+
+    const addNewTodo = (e, addForm) => {
+      const parentProject = addForm.getAttribute('data-project')
+      const newTodo = addForm.querySelector('.todo-title').textContent
+      const description = addForm.querySelector('.todo-description').textContent
+      const duedate = addForm.querySelector('.todo-duedate').value
+      const priorityElement = addForm.querySelector('.todo-priority')
+      const priority = priorityElement.options[priorityElement.selectedIndex].text;
+
+      Projects.find(parentProject).addTodo(newTodo, description, duedate, priority);
+
+      exitTodoAdder()
+
+      console.log(priority)
+    }
+
+    const createAddForm = (e) => {
+      const addForm = document.createElement('div');
+      addForm.classList.add('todo-element', 'todo-addForm');
+      addForm.setAttribute('data-project', projectName)
+
+      const submitBtn = document.createElement('button');
+      submitBtn.classList.add('todo-submit');
+      submitBtn.textContent = '✓';
+      addForm.append(submitBtn);
+       
+      const title = document.createElement('span');
+      title.textContent = 'New Todo';
+      title.classList.add('todo-title');
+      title.setAttribute('contentEditable', true)
+      addForm.appendChild(title)  
+
+      const description = document.createElement('span');
+      description.classList.add('todo-description');
+      addForm.appendChild(description); 
+
+      const duedateInput = document.createElement('input');
+      duedateInput.classList.add('todo-duedate', 'editable');
+      duedateInput.setAttribute('for', 'duedate');
+      duedateInput.setAttribute('type', 'date');
+      addForm.appendChild(duedateInput);
+
+      const prioritySelect = document.createElement('select');
+      prioritySelect.classList.add('todo-priority', 'editable');
+
+      const lowPriority = document.createElement('option');
+      lowPriority.textContent = 'low';
+      const mediumPriority = document.createElement('option');
+      mediumPriority.textContent = 'medium';
+      const highPriority = document.createElement('option');
+      highPriority.textContent = 'high'; 
+
+      prioritySelect.append(lowPriority, mediumPriority, highPriority)
+      addForm.appendChild(prioritySelect)
+
+      todoArea.insertBefore(addForm, document.querySelector('.todo-element'));
+      addBtn.classList.add('active');
+
+      const submitHandler = (e) => addNewTodo(e, addForm)
+      submitBtn.addEventListener('click', submitHandler, {once: true})
+      addBtn.addEventListener('click', exitTodoAdder, {once: true})
+    }
+
+    addBtn.addEventListener('click', createAddForm, {once: true});
   }
 
   function _appendTodoRemover(sortBar) {
-    const removeBtn = document.createElement('button')
-    removeBtn.classList = 'sort-remove'
-    removeBtn.textContent = '-'
-    sortBar.appendChild(removeBtn)
+    const removeBtn = document.createElement('button');
+    removeBtn.classList = 'sort-remove';
+    removeBtn.textContent = '-';
+    sortBar.appendChild(removeBtn);
 
     const removeElement = (e) => {
-      const parentElement = e.target.parentElement
-      const parentProject = parentElement.getAttribute('data-project')
+      const parentElement = e.target.parentElement;
+      const parentProject = parentElement.getAttribute('data-project');
       const todoTitle = parentElement.querySelector('.todo-title').textContent;
-      console.log(parentProject, todoTitle)
+      console.log(parentProject, todoTitle);
 
       Projects.find(parentProject).removeTodo(todoTitle);
       parentElement.remove();
-      console.log('removed!')
-    }
+      console.log('removed!');
+    };
 
     const startRemoveEditor = (e) => {
       const todoElements = document.querySelectorAll('.todo-element');
       todoElements.forEach(element => {
-        element.addEventListener('click', removeElement)
+        element.addEventListener('click', removeElement);
         element.classList.add('removeable');
       });
 
       removeBtn.classList.add('active');
-      removeBtn.addEventListener('click', exitRemoveEditor, {once: true})
+      removeBtn.addEventListener('click', exitRemoveEditor, {once: true});
     }
 
     const exitRemoveEditor = (e) => {
       const todoElements = document.querySelectorAll('.todo-element');
       todoElements.forEach(element => {
-        element.removeEventListener('click', removeElement)
+        element.removeEventListener('click', removeElement);
         element.classList.remove('removeable');
         
       });
 
       removeBtn.classList.remove('active');
-      removeBtn.addEventListener('click', startRemoveEditor, {once: true})
+      removeBtn.addEventListener('click', startRemoveEditor, {once: true});
     }
 
-    removeBtn.addEventListener('click', startRemoveEditor, {once: true})
+    removeBtn.addEventListener('click', startRemoveEditor, {once: true});
   }
 
-  function _appendSortBar() {
+  function _appendSortBar(projectName) {
     const sortBar = document.createElement('div');
     sortBar.classList.add('sort-bar');
 
     if(renderEditable === true) {
-      _appendTodoAdder(sortBar)
-      _appendTodoRemover(sortBar)
+      _appendTodoAdder(sortBar, projectName);
+      _appendTodoRemover(sortBar);
     }
 
     const sortTitle = document.createElement('span');
     sortTitle.classList.add('sort-title');
     sortTitle.textContent = 'title';
-    sortBar.appendChild(sortTitle)
+    sortBar.appendChild(sortTitle);
 
     const sortDescription = document.createElement('span');
     sortDescription.classList.add('sort-description');
     sortDescription.textContent = 'description';
-    sortBar.appendChild(sortDescription)
+    sortBar.appendChild(sortDescription);
 
     const sortDuedate = document.createElement('span');
-    sortDuedate.classList.add('sort-duedate')
+    sortDuedate.classList.add('sort-duedate');
     sortDuedate.textContent = 'duedate';
-    sortBar.appendChild(sortDuedate)
+    sortBar.appendChild(sortDuedate);
 
     const sortPriority = document.createElement('span');
     sortPriority.classList.add('sort-priority');
     sortPriority.textContent = 'priority';
-    sortBar.appendChild(sortPriority)
+    sortBar.appendChild(sortPriority);
 
     todoArea.appendChild(sortBar);
   }
@@ -435,14 +523,14 @@ const ProjectRenderer = (function() {
 
     let duedateInput = document.createElement('input');
     duedateInput.classList.add('todo-duedate', 'editable');
-    duedateInput.setAttribute('for', 'duedate')
-    duedateInput.setAttribute('type', 'date')
-    duedateInput.setAttribute('value', Todo.duedate.text)
+    duedateInput.setAttribute('for', 'duedate');
+    duedateInput.setAttribute('type', 'date');
+    duedateInput.setAttribute('value', Todo.duedate.text);
     
     let prioritySelect = document.createElement('select');
     prioritySelect.classList.add('todo-duedate', 'editable');
 
-    const lowPriority = document.createElement('option')
+    const lowPriority = document.createElement('option');
     lowPriority.textContent = 'low';
     const mediumPriority = document.createElement('option');
     mediumPriority.textContent = 'medium';
@@ -456,37 +544,37 @@ const ProjectRenderer = (function() {
       }
     })
 
-    prioritySelect.append(lowPriority, mediumPriority, highPriority)
+    prioritySelect.append(lowPriority, mediumPriority, highPriority);
 
 
     if(bool === true) {
-      Todo.editBtn.setAttribute('hidden', '')
-      Todo.title.element.classList.add('editable')
-      Todo.description.element.classList.add('editable')
+      Todo.editBtn.setAttribute('hidden', '');
+      Todo.title.element.classList.add('editable');
+      Todo.description.element.classList.add('editable');
 
-      Todo.duedate.element.setAttribute('hidden', '')
+      Todo.duedate.element.setAttribute('hidden', '');
       Todo.element.insertBefore(duedateInput, Todo.priority.element);
 
-      Todo.priority.element.setAttribute('hidden', '')
-      Todo.element.appendChild(prioritySelect)
+      Todo.priority.element.setAttribute('hidden', '');
+      Todo.element.appendChild(prioritySelect);
     } else {
       Todo.editBtn.removeAttribute('hidden');
-      Todo.title.element.classList.remove('editable')
-      Todo.description.element.classList.remove('editable')
+      Todo.title.element.classList.remove('editable');
+      Todo.description.element.classList.remove('editable');
 
-      Todo.duedate.element.removeAttribute('hidden')
-      Todo.priority.element.removeAttribute('hidden')
+      Todo.duedate.element.removeAttribute('hidden');
+      Todo.priority.element.removeAttribute('hidden');
 
       //must update elements to remove them?
       duedateInput = Todo.element.querySelector('input');
       prioritySelect = Todo.element.querySelector('select');
-      Todo.element.removeChild(duedateInput)
+      Todo.element.removeChild(duedateInput);
       Todo.element.removeChild(prioritySelect);
     }
   }
 
   function _abortTodoEdit(Todo) {
-    _makeTodoEditable(Todo, false)
+    _makeTodoEditable(Todo, false);
     Todo.element.removeChild(Todo.submitBtn);
 
     Todo.title.element.textContent = Todo.title.text;
@@ -496,11 +584,11 @@ const ProjectRenderer = (function() {
   }
 
   function _submitTodoChanges(Todo) {
-    const duedateInput = Todo.element.querySelector('input')
+    const duedateInput = Todo.element.querySelector('input');
     const duedateValue = duedateInput.value;
 
-    const prioritySelect = Todo.element.querySelector('select')
-    const priorityOption = prioritySelect.options[prioritySelect.selectedIndex].text
+    const prioritySelect = Todo.element.querySelector('select');
+    const priorityOption = prioritySelect.options[prioritySelect.selectedIndex].text;
 
     //compares current text to text when edit was initiated
     if( Todo.title.text === Todo.title.element.textContent &&
@@ -510,13 +598,13 @@ const ProjectRenderer = (function() {
       ) {
       _abortTodoEdit(Todo);
     } else {
-      const parentProject = Todo.element.getAttribute('data-project')
+      const parentProject = Todo.element.getAttribute('data-project');
       const title = Todo.title.text;
       const newTitle = Todo.title.element.textContent;
       const newDescription = Todo.description.element.textContent;
       const newDuedate = duedateValue;
       const newPriority = priorityOption;
-      let titleChanged
+      let titleChanged;
 
       if(Todo.title.element.textContent !== Todo.title.text) {
         Projects.find(parentProject).findTodo(title).edit('title', newTitle);
@@ -533,12 +621,12 @@ const ProjectRenderer = (function() {
                        Projects.find(parentProject).findTodo(newTitle) : 
                        Projects.find(parentProject).findTodo(title);
 
-      todoObj.edit('description', newDescription)
-      todoObj.edit('duedate', newDuedate)
-      todoObj.edit('priority', newPriority)
+      todoObj.edit('description', newDescription);
+      todoObj.edit('duedate', newDuedate);
+      todoObj.edit('priority', newPriority);
       
       Todo.element.removeChild(Todo.submitBtn);
-      _makeTodoEditable(Todo, false)
+      _makeTodoEditable(Todo, false);
 
       Todo.duedate.element.textContent = newDuedate;
       Todo.priority.element.textContent = newPriority;
@@ -574,9 +662,9 @@ const ProjectRenderer = (function() {
           element: e.target.parentElement.children[4], 
           text: e.target.parentElement.children[4].textContent
         }
-      }
+      };
       
-      _makeTodoEditable(Todo, true)
+      _makeTodoEditable(Todo, true);
 
       Todo.submitBtn = document.createElement('button');
       Todo.submitBtn.classList.add('todo-submit');
@@ -599,14 +687,14 @@ const ProjectRenderer = (function() {
   
     const todos = Projects.find(projectName).listTodos;
 
-    _appendSortBar();
+    _appendSortBar(projectName);
   
     if(todos.length > 0) {
   
       todos.forEach(todo => {
         const todoElement = document.createElement('div');
         todoElement.classList.add('todo-element');
-        todoElement.setAttribute('data-project', todo.parentProject)
+        todoElement.setAttribute('data-project', todo.parentProject);
         
         if(renderEditable === true) _appendTodoEditor(todoElement);
 
@@ -630,7 +718,7 @@ const ProjectRenderer = (function() {
         priority.classList.add('todo-priority');
         todoElement.appendChild(priority);  
         
-        todoArea.appendChild(todoElement);
+        todoArea.insertBefore(todoElement, document.querySelector('.todo-element'));
       })
     }
   }
