@@ -9,10 +9,8 @@ ProjectRenderer.init(document.querySelector('.sidebar'),
 if(localStorage.getItem('projectsList') === '[]' || localStorage.length === 0) {
   Projects.add('New Project').find('New Project').addTodo(
     'Start making your todo lists!', 
-    `Open the sidebar to the left by hovering over it.\n` + 
-    `Add new projects by typing their name and pressing enter.\n` +
-    `Use the pencil icons to edit projects and todos!`, 
-    'never', 
+    `Add new projects by typing their name in the sidebar and pressing enter.\n`,
+    '', 
     'low'
   )
 } else {
