@@ -11,7 +11,7 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
     static: './dist',
-    hot: true, //allows reloading with HTML Templates
+    hot: false, //allows reloading with HTML Templates
   },
   plugins: [
     new HtmlWebpackPlugin({
