@@ -410,6 +410,7 @@ const ProjectRenderer = (function() {
 
       const description = document.createElement('span');
       description.classList.add('todo-description');
+      description.setAttribute('contentEditable', true)
       addForm.appendChild(description); 
 
       const duedateInput = document.createElement('input');
