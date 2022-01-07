@@ -6,7 +6,7 @@ ProjectRenderer.init(document.querySelector('.sidebar'),
                      document.querySelector('.todos'),
                      true)
 
-if(localStorage.getItem('projectsList') === '[]' || localStorage.getItem('projectsList') === null) {
+if(localStorage.getItem('projectsList') === '[]' || localStorage.length === 0) {
   Projects.add('New Project').find('New Project').addTodo(
     'Start making your todo lists!', 
     `Open the sidebar to the left by hovering over it.\n` + 
