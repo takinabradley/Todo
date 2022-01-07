@@ -398,18 +398,18 @@ const ProjectRenderer = (function() {
       addForm.setAttribute('data-project', projectName)
 
       const submitBtn = document.createElement('button');
-      submitBtn.classList.add('todo-submit');
+      submitBtn.classList.add('todo-submit', 'editable');
       submitBtn.textContent = '✓';
       addForm.append(submitBtn);
        
       const title = document.createElement('span');
       title.textContent = 'New Todo';
-      title.classList.add('todo-title');
+      title.classList.add('todo-title', 'editable');
       title.setAttribute('contentEditable', true)
       addForm.appendChild(title)  
 
       const description = document.createElement('span');
-      description.classList.add('todo-description');
+      description.classList.add('todo-description', 'editable');
       description.setAttribute('contentEditable', true)
       addForm.appendChild(description); 
 
