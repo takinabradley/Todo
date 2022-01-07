@@ -234,6 +234,7 @@ const ProjectRenderer = (function() {
   function _appendProjectAdder() {
     const form = document.createElement('form');
     form.classList.add('project-add');
+    form.setAttribute('autocomplete', 'off')
     projectArea.appendChild(form);
 
     const addLabel = document.createElement('label');
@@ -353,11 +354,57 @@ const ProjectRenderer = (function() {
     sortBar.appendChild(addBtn)
   }
 
+  function _appendTodoRemover(sortBar) {
+    const removeBtn = document.createElement('button')
+    removeBtn.classList = 'sort-remove'
+    removeBtn.textContent = '-'
+    sortBar.appendChild(removeBtn)
+
+    const removeElement = (e) => {
+      const parentElement = e.target.parentElement
+      const parentProject = parentElement.getAttribute('data-project')
+      const todoTitle = parentElement.querySelector('.todo-title').textContent;
+      console.log(parentProject, todoTitle)
+
+      Projects.find(parentProject).removeTodo(todoTitle);
+      parentElement.remove();
+      console.log('removed!')
+    }
+
+    const startRemoveEditor = (e) => {
+      const todoElements = document.querySelectorAll('.todo-element');
+      todoElements.forEach(element => {
+        element.addEventListener('click', removeElement)
+        element.classList.add('removeable');
+      });
+
+      removeBtn.classList.add('active');
+      removeBtn.addEventListener('click', exitRemoveEditor, {once: true})
+    }
+
+    const exitRemoveEditor = (e) => {
+      const todoElements = document.querySelectorAll('.todo-element');
+      todoElements.forEach(element => {
+        element.removeEventListener('click', removeElement)
+        element.classList.remove('removeable');
+        
+      });
+
+      removeBtn.classList.remove('active');
+      removeBtn.addEventListener('click', startRemoveEditor, {once: true})
+    }
+
+    removeBtn.addEventListener('click', startRemoveEditor, {once: true})
+  }
+
   function _appendSortBar() {
     const sortBar = document.createElement('div');
     sortBar.classList.add('sort-bar');
 
-    if(renderEditable === true) _appendTodoAdder(sortBar)
+    if(renderEditable === true) {
+      _appendTodoAdder(sortBar)
+      _appendTodoRemover(sortBar)
+    }
 
     const sortTitle = document.createElement('span');
     sortTitle.classList.add('sort-title');
@@ -455,6 +502,7 @@ const ProjectRenderer = (function() {
     const prioritySelect = Todo.element.querySelector('select')
     const priorityOption = prioritySelect.options[prioritySelect.selectedIndex].text
 
+    //compares current text to text when edit was initiated
     if( Todo.title.text === Todo.title.element.textContent &&
         Todo.description.text === Todo.description.element.textContent &&
         Todo.duedate.text === duedateValue &&
@@ -472,7 +520,6 @@ const ProjectRenderer = (function() {
 
       if(Todo.title.element.textContent !== Todo.title.text) {
         Projects.find(parentProject).findTodo(title).edit('title', newTitle);
-
         //checks if old todo title exists, and resets textContent if still does
         if(typeof Projects.find(parentProject).findTodo(title) === 'object') {
           Todo.title.element.textContent = Todo.title.text;

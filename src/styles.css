@@ -23,10 +23,8 @@ main {
 	align-items: flex-start;
 	flex: 1;
 	gap: 3px;
-
 	max-width: 275px;
 	padding: 15px;
-
 	background-color: rgb(229, 230, 231);
 	border-right: 1px solid lightgray;
 }
@@ -106,6 +104,8 @@ main {
 	word-wrap: break-word;
 	flex: 0 1 auto;
 	margin-bottom: 10px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .sort-title, .sort-description, .sort-priority, .sort-duedate {
@@ -123,13 +123,27 @@ main {
 
 .sort-add {
 	flex: 1;
-	max-width: 20px;
+	max-width: 10px;
 	background: none;
   border: none;
   padding: 0;
 	font-size: 20px;
-	margin-left: 5px;
-	margin-right: 5px;
+	margin-left: 3.5px;
+}
+
+.sort-remove {
+	flex: 1;
+	max-width: 10px;
+	background: none;
+  border: none;
+  padding: 0;
+	font-size: 20px;
+	margin-left: 3.5px;
+	margin-right: 3.5px;
+}
+
+.sort-remove.active {
+	color: red;
 }
 
 /*Todo Elements*/
@@ -137,21 +151,34 @@ main {
 	display: flex;
 	justify-content: space-between;
 	background-color: rgb(229, 230, 231);
-	border: 1px solid lightgray;
+	border: 1px solid gray;
 	border-radius: 5px;
-	flex: 0 1 auto;
+	width: 100%;
 	word-wrap: break-word;
-	margin-bottom: 5px;
-	padding: 5px;
+	flex: 0 1 auto;
+	margin-bottom: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	word-break: break-word;
+}
+
+.todo-element.removeable:hover {
+	background-color: rgb(253, 80, 80);
+}
+
+.todo-element.removeable:hover .todo-title,
+.todo-element.removeable:hover .todo-description,
+.todo-element.removeable:hover .todo-duedate {
+	border-right: 1px solid black;
 }
 
 .todo-title, .todo-description, .todo-priority, .todo-duedate {
 	flex: 1;
 	width: 25%;
-	word-wrap: break-word;
 	text-align: center;
-	margin-right: 5px;
+	padding: 3px;
 	margin-left: 5px;
+	margin-right: 5px;
 }
 
 .todo-description {
@@ -160,7 +187,7 @@ main {
 }
 
 .todo-title, .todo-description, .todo-duedate {
-	border-right: 2px solid lightgray;
+	border-right: 1px solid rgb(175, 175, 175);
 }
 
 .todo-title.editable, 

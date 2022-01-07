@@ -6,7 +6,27 @@ ProjectRenderer.init(document.querySelector('.sidebar'),
                      document.querySelector('.todos'),
                      true)
 
-Projects.getFromLocalStorage();
+if(localStorage.getItem('projectsList') === '[]') {
+  Projects.add('New Project').find('New Project').addTodo(
+    'Start making your todo lists!', 
+    `Open the sidebar to the left by hovering over it.\n` + 
+    `Add new projects by typing their name and pressing enter.\n` +
+    `Use the pencil icons to edit projects and todos!`, 
+    'never', 
+    'low'
+  )
+} else {
+  Projects.getFromLocalStorage();
+}
+
+//finds and clicks the first project in the project list to render it's todos
+document.querySelector('.project-name').dispatchEvent(
+  new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  })
+);
 
 /*
 Projects.find('something').addTodo('1')
