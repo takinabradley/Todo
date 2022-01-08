@@ -1,35 +1,34 @@
-const Events = (function() {
-  let events = {};
+const Events = (function () {
+  const events = {}
 
   function on (eventName, fn) {
-    events[eventName] = events[eventName] || [];
-    events[eventName].push(fn);
+    events[eventName] = events[eventName] || []
+    events[eventName].push(fn)
   }
 
   function off (eventName, fn) {
     if (events[eventName]) {
       for (let i = 0; i < events[eventName].length; i++) {
         if (events[eventName][i] === fn) {
-          events[eventName].splice(i, 1);
-          break;
+          events[eventName].splice(i, 1)
+          break
         }
       }
     }
   }
 
-  function emit(eventName, data) {
+  function emit (eventName, data) {
     if (events[eventName]) {
-      events[eventName].forEach(function(fn) {
-        fn(data);
-      });
+      events[eventName].forEach(function (fn) {
+        fn(data)
+      })
     }
   }
 
-  return {on, off, emit, get list() {return events}};
-})();
+  return { on, off, emit, get list () { return events } }
+})()
 
-export default Events;
-
+export default Events
 
 /* People.js
 
