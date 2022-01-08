@@ -1,12 +1,12 @@
 const Events = (function () {
   const events = {}
 
-  function on (eventName, fn) {
+  function on(eventName, fn) {
     events[eventName] = events[eventName] || []
     events[eventName].push(fn)
   }
 
-  function off (eventName, fn) {
+  function off(eventName, fn) {
     if (events[eventName]) {
       for (let i = 0; i < events[eventName].length; i++) {
         if (events[eventName][i] === fn) {
@@ -17,7 +17,7 @@ const Events = (function () {
     }
   }
 
-  function emit (eventName, data) {
+  function emit(eventName, data) {
     if (events[eventName]) {
       events[eventName].forEach(function (fn) {
         fn(data)
@@ -25,7 +25,14 @@ const Events = (function () {
     }
   }
 
-  return { on, off, emit, get list () { return events } }
+  return {
+    on,
+    off,
+    emit,
+    get list() {
+      return events
+    },
+  }
 })()
 
 export default Events
