@@ -1,4 +1,4 @@
-import { ReactPropTypes } from "react"
+import PropTypes from 'prop-types'
 export default function Project({ projectName, projectTodos, onAddTodo }) {
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -22,7 +22,7 @@ export default function Project({ projectName, projectTodos, onAddTodo }) {
 }
 
 Project.propTypes = {
-  projectName: ReactPropTypes.string.required,
-  projectTodos: ReactPropTypes.object.required,
-  onAddTodo: ReactPropTypes.func
+  projectName: PropTypes.string.isRequired,
+  projectTodos: PropTypes.object.isRequired,
+  onAddTodo: PropTypes.func
 }
