@@ -4,7 +4,7 @@ import Project from './Project'
 function TodoList() {
   const { projects, addProject, addTodo } = useTodoList()
 
-  const handleSubmit = (e) => {
+  const handleAddProject = (e) => {
     e.preventDefault()
     const projectName = e.target.projectName.value
     addProject(projectName)
@@ -16,7 +16,7 @@ function TodoList() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleAddProject}>
         <input type="text" name='projectName' />
         <button type='submit'>Submit</button>
       </form>
