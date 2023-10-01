@@ -2,7 +2,7 @@ import { useTodoList } from '../../hooks'
 import Project from './Project'
 
 function TodoList() {
-  const { projects, addProject, removeProject, addTodo, removeTodo } = useTodoList()
+  const { projects, addProject, addTodo } = useTodoList()
 
   const handleSubmit = (e) => {
     e.preventDefault()
